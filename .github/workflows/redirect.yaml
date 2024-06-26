@@ -44,8 +44,8 @@ jobs:
         run: |
           mv -f output_file.json bench_file.json
           echo "start to commit changes  ######==========="
-          git config --local user.email "fabrice.djiatsa-ext@st.com"
-          git config --local user.name "fab-djiatsa"
+          git config --local user.email "erwan.gouriou@st.com"
+          git config --local user.name "erwango"
           git add .
           git commit -m "updated zephyr JSON file" -a
           git -c http.extraheader="AUTHORIZATION: bearer ${{ secrets.PAT_RED }}" push origin main 
