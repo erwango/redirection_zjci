@@ -1,0 +1,52 @@
+
+name: Fetch and Save JSON File
+on:
+  push:
+      branches: [ main ]
+  pull_request:
+      branches: [ main ]
+  schedule:
+    # Runs at the start of 5 minutes
+    - cron: '*/5 * * * *'
+  
+
+jobs:
+  download-and-save-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+          
+      - name: save json file into current directory
+        run: |
+          curl -o output_file.json -L "https://testing.zephyrproject.org/daily_tests/versions.json"
+          
+      - name: Check if JSON file exists and has changed
+        id: check-file
+        run: |
+          if [[ -f bench_file.json ]]; then
+            if cmp -s bench_file.json output_file.json; then
+              echo "File exists and is unchanged."
+              echo "::set-output name=changed::false"
+            else
+              echo "File exists and has changed."
+              echo "::set-output name=changed::true"
+            fi
+          else
+            echo "File does not exist."
+            echo "::set-output name=changed::true"
+          fi
+          
+                
+      - name: Commit and push the new JSON file
+        if: steps.check-file.outputs.changed == 'true'
+        run: |
+          mv -f output_file.json bench_file.json
+          echo "start to commit changes  ######==========="
+          git config --local user.email "fabrice.djiatsa-ext@st.com"
+          git config --local user.name "fab-djiatsa"
+          git add .
+          git commit -m "updated zephyr JSON file" -a
+          git -c http.extraheader="AUTHORIZATION: bearer ${{ secrets.PAT_RED }}" push origin main 
+          
