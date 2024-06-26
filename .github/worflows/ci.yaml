@@ -48,5 +48,5 @@ jobs:
           git config --local user.name "fab-djiatsa"
           git add .
           git commit -m "updated zephyr JSON file" -a
-          git -c http.extraheader="AUTHORIZATION: bearer ${{ secrets.RED_PAT }}" push origin main 
+          git -c http.extraheader="AUTHORIZATION: bearer ${{ secrets.PAT_RED }}" push origin main 
           
